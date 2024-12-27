@@ -25,7 +25,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Project folders
-PROJECTS := $(shell find . -regextype sed -regex "\./\(samples\|demos\)/.*/Makefile")
+PROJECTS := $(shell find . -regextype sed -regex "\./\(samples\|demos\|custom_demos\)/.*/Makefile")
 
 %.pr_build: nvxio_build
 	+@$(MAKE) -C $(dir $*)
