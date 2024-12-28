@@ -245,7 +245,7 @@ int main(int argc, char** argv)
             std::ostringstream msg;
             msg << std::fixed << std::setprecision(1);
 
-            msg << "Resolution: " << frameConfig1.frameWidth << 'x' << frameConfig1.frameHeight << std::endl;
+            msg << "Resolution: " << frameConfig1.frameWidth * 2 << 'x' << frameConfig1.frameHeight * 2 << std::endl;
             msg << "Algorithm: " << proc_ms << " ms / " << 1000.0 / proc_ms << " FPS" << std::endl;
             msg << "Display: " << total_ms  << " ms / " << 1000.0 / total_ms << " FPS" << std::endl;
 
