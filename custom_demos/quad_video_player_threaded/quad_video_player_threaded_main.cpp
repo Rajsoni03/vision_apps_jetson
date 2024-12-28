@@ -85,20 +85,19 @@ int main(int argc, char** argv)
         ovxio::printVersionInfo();
 
         // Take video inputs
-
         std::string sourceUri[NUM_SOURCES] = {
-            app.findSampleFilePath("cars.mp4"),
-            app.findSampleFilePath("signs.avi"),
-            app.findSampleFilePath("parking.avi"),
-            app.findSampleFilePath("pedestrians.mp4")
+            app.findSampleFilePath("car_dashcam_1.mp4"),
+            app.findSampleFilePath("car_dashcam_2.mp4"),
+            app.findSampleFilePath("car_dashcam_5.mp4"),
+            app.findSampleFilePath("car_dashcam_6.mp4"),
         };
 
         // Take video inputs with full path 
         // std::string sourceUri[NUM_SOURCES] = {
-        //     "/media/raj/HP/data/cars.mp4",
-        //     "/media/raj/HP/data/signs.avi",
-        //     "/media/raj/HP/data/signs.avi",
-        //     "/media/raj/HP/data/cars.mp4"
+        //     "/media/raj/HP/data/car_dashcam_1.mp4",
+        //     "/media/raj/HP/data/car_dashcam_2.mp4",
+        //     "/media/raj/HP/data/car_dashcam_5.mp4",
+        //     "/media/raj/HP/data/car_dashcam_6.mp4"
         // };
 
         app.init(argc, argv);
@@ -175,6 +174,14 @@ int main(int argc, char** argv)
         nvx::Timer procTimer;
         totalTimer.tic();
 
+        ovxio::Render::TextBoxStyle textStyle = {
+            {255u, 255u, 255u, 255u}, // color
+            {0u,   0u,   0u,   127u}, // bgcolor
+            {10u, 10u} // origin
+        };
+
+        ovxio::FrameSource::FrameStatus fetchStatus = ovxio::FrameSource::OK;
+
         while (!eventData.stop)
         {
             procTimer.tic();
@@ -185,15 +192,20 @@ int main(int argc, char** argv)
                     if (reopenFlags[i])
                         continue;
 
-                    ovxio::FrameSource::FrameStatus fetchStatus = frameSources[i]->fetch(tempImages[i]);
-
-                     // Resize the frame to the desired resolution
-                    if (fetchStatus == ovxio::FrameSource::OK) {
-                        vx_status status = vxuScaleImage(context, tempImages[i], rois[i], VX_INTERPOLATION_TYPE_BILINEAR);
-                        if (status != VX_SUCCESS) {
-                            std::cerr << "Error: Failed to resize frame from source " << i << std::endl;
-                            continue;
+                    // Resize the frame to the desired resolution
+                    if (frameConfigs[i].frameWidth != frameWidth || frameConfigs[i].frameHeight != frameHeight){
+                        fetchStatus = frameSources[i]->fetch(tempImages[i]);
+                        
+                        if (fetchStatus == ovxio::FrameSource::OK) {
+                            vx_status status = vxuScaleImage(context, tempImages[i], rois[i], VX_INTERPOLATION_TYPE_BILINEAR);
+                            if (status != VX_SUCCESS) {
+                                std::cerr << "Error: Failed to resize frame from source " << i << std::endl;
+                                continue;
+                            }
                         }
+                    }
+                    else{
+                        fetchStatus = frameSources[i]->fetch(rois[i]);
                     }
 
                     if (fetchStatus == ovxio::FrameSource::CLOSED && !reopenFlags[i]){
@@ -232,12 +244,6 @@ int main(int argc, char** argv)
             msg << "Space - pause/resume" << std::endl;
             msg << "Esc - close the demo";
 
-            ovxio::Render::TextBoxStyle textStyle = {
-                {255u, 255u, 255u, 255u}, // color
-                {0u,   0u,   0u,   127u}, // bgcolor
-                {10u, 10u} // origin
-            };
-
             render->putTextViewport(msg.str(), textStyle);
 
             // Flush all rendering commands
@@ -257,4 +263,3 @@ int main(int argc, char** argv)
 
     return nvxio::Application::APP_EXIT_CODE_SUCCESS;
 }
-
