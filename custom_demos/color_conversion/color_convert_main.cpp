@@ -189,7 +189,7 @@ int main (int argc, char* argv[]){
             msg << std::setprecision(6);
             msg.unsetf(std::ios_base::floatfield);
             msg << "LIMITED TO " << app.getFPSLimit() << " FPS FOR DISPLAY" << std::endl;
-            msg << "M - switch Source/Edges" << std::endl;
+            msg << "M - switch RGB/Grey" << std::endl;
             msg << "Space - pause/resume" << std::endl;
             msg << "Esc - close the demo";
 
