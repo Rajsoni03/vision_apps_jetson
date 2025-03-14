@@ -33,6 +33,7 @@ Availiable samples are:
 ./nvx_custom_color_conversion
 ./nvx_custom_quad_video_player
 ./nvx_custom_quad_video_player_threaded 
+./nvx_custom_multi_video_player_threaded
 ```
 
 ## Docs
